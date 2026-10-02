@@ -4,14 +4,30 @@ package org.example;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+        // Herramientas de exportación: una propia y una externa adaptada
+        Exportador texto = new ExportadorTexto();
+        Exportador pdf = new PDFAdapter(new LibreriaPDF());
+
+        // Factory Method: cada fábrica decide qué documento crear
+        FabricaDocumento fabricaFactura = new FabricaFactura();
+        FabricaDocumento fabricaContrato = new FabricaContrato();
+        FabricaDocumento fabricaInforme = new FabricaInforme();
+
+        System.out.println("##### Exportador propio (texto) #####");
+        fabricaFactura.generar(texto);
+
+        System.out.println("##### Biblioteca externa de PDF (via Adapter) #####");
+        fabricaContrato.generar(pdf);
+        fabricaInforme.generar(pdf);
+
+        // Builder: documento personalizado (solo los elementos que se necesitan)
+        System.out.println("##### Documento personalizado con el Builder #####");
+        Documento personalizado = new Informe.Builder()
+                .conEncabezado("Informe trimestral (sin tabla)")
+                .conGrafico("Grafico de lineas")
+                .build();
+        personalizado.mostrar();
+        pdf.exportar(personalizado);
     }
 }
